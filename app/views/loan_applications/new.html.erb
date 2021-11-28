@@ -1,0 +1,139 @@
+<style>
+  /* For the Navbar */
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+  }
+
+  li {
+    float: left;
+    border-right:1px solid #bbb;
+  }
+
+  li:last-child {
+    border-right: none;
+  }
+
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  li a:hover:not(.active) {
+    background-color: #111;
+  }
+
+  .active {
+    background-color: #04AA6D;
+  }
+
+input[type=text], select {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=email], select {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=submit] {
+  width: 50%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 1px;
+}
+</style>
+
+  <ul>
+    <li>
+      <%= link_to "List applications", {action: 'index', controller: 'loan_applications'}, class: 'active'%>
+    </li>
+  </ul>
+<center><h1>Apply for Loan</h1></center>
+
+<%= form_for @loan_application, url: loan_applications_path do |form|%>
+  <% if @loan_application.errors.any? || @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@loan_application.errors.count + @user.errors.count, "error") %> prohibited this Loan application from being saved:</h2>
+
+      <ul>
+      <% (@user.errors.full_messages + @loan_application.errors.full_messages).each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <center>
+    <div class="field">
+      <%= fields_for :user, @user do |user| %>
+        <h2><b>User Identity details:</b></h2>
+        <div>
+          <%= user.label :email %>
+          <%= user.email_field :email %>
+        </div>
+        <div>
+          <%= user.label :pan_card %>
+          <%= user.text_field :pan_card %>
+        </div>
+        <div>
+          <%= user.label :aadhar_number %>
+          <%= user.text_field :aadhar_number %>
+        </div>
+
+        <h2><b>Bank details:</b></h2>
+        <%= user.fields_for :bank_details, @user.bank_details.build do |bd|%>
+          <div>
+            <%= bd.label :account_number %>
+            <%= bd.text_field :account_number %>
+          </div>
+          <div>
+            <%= bd.label :ifsc_number %>
+            <%= bd.text_field :ifsc_number %>
+          </div>
+        <%end%>
+      <%end%>
+
+      <div>
+        <%= form.label :inflow_amount %>
+        <%= form.text_field :inflow_amount %>
+      </div>
+      <div>
+        <%= form.label :outflow_amount %>
+        <%= form.text_field :outflow_amount %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= form.submit 'Apply' %>
+    </div>
+  </center>
+<% end %>

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  root to: 'loan_applications#dashboard'
+  resources :loan_applications, only: %w[dashboard index new create show]
 end
