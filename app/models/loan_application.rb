@@ -22,8 +22,14 @@ class LoanApplication < ApplicationRecord
                             users.aadhar_number AS aadhar_number,
                             bank_details.account_number AS account_number,
                             bank_details.ifsc_number AS ifsc_number')
-                   .joins(bank_detail: :user)
-                   .find(loan_id)
+      .joins(bank_detail: :user)
+      .find(loan_id)
+  end
+
+  def self.find_or_create_loan_application_details(loan_application_params, bank_detail)
+    bank_detail.loan_applications.build(loan_application_params)
+    bank_detail.save
+    bank_detail.loan_applications.last
   end
 
   private

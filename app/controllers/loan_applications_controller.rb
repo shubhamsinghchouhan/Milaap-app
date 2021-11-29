@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
+# This controller handling incoming and outgoing requests
 class LoanApplicationsController < ApplicationController
-  SOCIAL_PROFILES = %w[linkedin twitter facebook].freeze
   http_basic_authenticate_with name: 'milaap', password: 'milaap', only: :index
 
-  def dashboard
-  end
+  def dashboard; end
 
   def index
     @loan_applications = LoanApplication.all
@@ -18,7 +17,7 @@ class LoanApplicationsController < ApplicationController
 
   def create
     ActiveRecord::Base.transaction do
-      find_or_create_user
+      fetch_user
       find_or_create_bank_details
     end
     respond_to do |format|
@@ -27,7 +26,7 @@ class LoanApplicationsController < ApplicationController
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @loan_application.errors, status: :unprocessable_entity }
       else
-        find_or_create_loan_application_details
+        fetch_loan_application
         fetch_and_update_score
         format.html { redirect_to loan_application_path(id: @loan_application.id), notice: "Loan Application was successfully created." }
         format.json { render :show, status: :created, location: @loan_application }
@@ -57,8 +56,8 @@ class LoanApplicationsController < ApplicationController
     @loan_application = LoanApplication.new
   end
 
-  def find_or_create_user
-    @user = User.find_or_create_by(user_params.slice(:email, :pan_card, :aadhar_number))
+  def fetch_user
+    @user = User.find_or_create_user(user_params)
     @error = true if @user.errors.any?
   end
 
@@ -70,10 +69,8 @@ class LoanApplicationsController < ApplicationController
     @bank_detail = @user.bank_details.last
   end
 
-  def find_or_create_loan_application_details
-    @bank_detail.loan_applications.build(loan_application_params)
-    @bank_detail.save
-    @loan_application = @bank_detail.loan_applications.last
+  def fetch_loan_application
+    @loan_application = LoanApplication.find_or_create_loan_application_details(loan_application_params, @bank_detail)
   end
 
   def fetch_and_update_score

@@ -1,23 +1,23 @@
 <style>
   /* For the Navbar */
-  ul {
+  ul.nav-bar-ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: #7c8494;
   }
 
-  li {
+  li.nav-bar-li {
     float: left;
     border-right:1px solid #bbb;
   }
 
-  li:last-child {
+  li.nav-bar-li:last-child {
     border-right: none;
   }
 
-  li a {
+  li.nav-bar-li a {
     display: block;
     color: white;
     text-align: center;
@@ -25,7 +25,7 @@
     text-decoration: none;
   }
 
-  li a:hover:not(.active) {
+  li.nav-bar-li a:hover:not(.active) {
     background-color: #111;
   }
 
@@ -73,25 +73,27 @@ div {
 }
 </style>
 
-  <ul>
-    <li>
+<div>
+  <ul class="nav-bar-ul">
+    <li class="nav-bar-li">
       <%= link_to "List applications", {action: 'index', controller: 'loan_applications'}, class: 'active'%>
     </li>
   </ul>
+</div>
 <center><h1>Apply for Loan</h1></center>
 
-<%= form_for @loan_application, url: loan_applications_path do |form|%>
-  <% if @loan_application.errors.any? || @user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@loan_application.errors.count + @user.errors.count, "error") %> prohibited this Loan application from being saved:</h2>
+<% if @loan_application.errors.any? || @user.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@loan_application.errors.count + @user.errors.count, "error") %> prohibited this Loan application from being saved:</h2>
 
-      <ul>
-      <% (@user.errors.full_messages + @loan_application.errors.full_messages).each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <ul>
+    <% (@user.errors.full_messages + @loan_application.errors.full_messages).each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<%= form_for @loan_application, url: loan_applications_path do |form|%>
   <center>
     <div class="field">
       <%= fields_for :user, @user do |user| %>
